@@ -17,8 +17,6 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    // prepared statements
-
     private static final String INSERT_PRODUCT_SQL =
             "insert into product (product_name, product_description, list_price, unit_cost) values (?, ?, ?, ?)";
 
@@ -35,13 +33,11 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
     private static final String SELECT_ALL_PRODUCTS_SQL =
             "select * from product";
 
-    // constructor
 
     public ProductDaoJdbcTemplateImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Interact with database
 
     private Product mapRowToProduct(ResultSet rs, int rowNum) throws SQLException {
         Product product = new Product();
@@ -54,7 +50,6 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
         return product;
     }
 
-    // implement methods
 
     @Override
     @Transactional
@@ -79,7 +74,7 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
         try {
             return jdbcTemplate.queryForObject(SELECT_PRODUCT_SQL, this::mapRowToProduct, id);
         } catch (EmptyResultDataAccessException e) {
-            // if there is no match for this id, return null
+
             return null;
         }
     }
@@ -87,8 +82,7 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
     @Override
     @Transactional
     public void updateProduct(Product product) {
-        // checks for id first so user knows if anything was updated
-        // user could have unknowingly entered the wrong id
+
         Product productInDB = getProduct(product.getProductId());
         if (productInDB == null) {
             throw new IllegalArgumentException("The id provided does not exist.");
@@ -107,8 +101,7 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
     @Override
     @Transactional
     public void deleteProduct(int id) {
-        // checks for id first so user knows if anything was deleted
-        // user could have unknowingly entered the wrong id
+
         Product productInDB = getProduct(id);
         if (productInDB == null) {
             throw new NotFoundException("The id provided does not exist.");

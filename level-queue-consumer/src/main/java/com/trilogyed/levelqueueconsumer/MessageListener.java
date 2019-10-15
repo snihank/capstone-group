@@ -14,7 +14,6 @@ public class MessageListener {
     @RabbitListener(queues = LevelQueueConsumerApplication.QUEUE_NAME)
     public void receiveMessage(LevelUp msg) {
 
-        // Let the presence of a valid ID determine create or update
         System.out.println(msg.toString());
         if(msg.getLevelUpId() != 0){
             client.updateLevelUp(msg.getLevelUpId(), msg);

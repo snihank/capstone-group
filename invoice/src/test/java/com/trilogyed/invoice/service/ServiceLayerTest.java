@@ -6,7 +6,7 @@ import com.trilogyed.invoice.dao.InvoiceItemDao;
 import com.trilogyed.invoice.dao.InvoiceItemDaoJdbcTemplateImpl;
 import com.trilogyed.invoice.model.Invoice;
 import com.trilogyed.invoice.model.InvoiceItem;
-import com.trilogyed.invoice.viewModel.OrderViewModel;
+import com.trilogyed.invoice.model.InvoiceViewModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -51,14 +51,14 @@ public class ServiceLayerTest {
 
         invoiceItems.add(invoiceItem);
 
-        OrderViewModel order = new OrderViewModel();
+        InvoiceViewModel order = new InvoiceViewModel();
         order.setCustomerId(1);
         order.setPurchaseDate(LocalDate.of(2019, 7, 15));
         order.setInvoiceItems(invoiceItems);
 
         order = service.addInvoice(order);
 
-        OrderViewModel o1 = service.getInvoice(order.getInvoiceId());
+        InvoiceViewModel o1 = service.getInvoice(order.getInvoiceId());
 
         assertEquals(order, o1);
     }
@@ -77,20 +77,20 @@ public class ServiceLayerTest {
 
         invoiceItems.add(invoiceItem);
 
-        OrderViewModel invoiceVM = new OrderViewModel();
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
         invoiceVM.setCustomerId(1);
         invoiceVM.setPurchaseDate(LocalDate.of(2019, 7, 15));
         invoiceVM.setInvoiceItems(invoiceItems);
 
         service.addInvoice(invoiceVM);
 
-        invoiceVM = new OrderViewModel();
+        invoiceVM = new InvoiceViewModel();
         invoiceVM.setCustomerId(2);
         invoiceVM.setPurchaseDate(LocalDate.of(2019, 5, 10));
 
         service.addInvoice(invoiceVM);
 
-        List<OrderViewModel> fromService = service.getAllInvoices();
+        List<InvoiceViewModel> fromService = service.getAllInvoices();
 
         assertEquals(2, fromService.size());
 
@@ -98,7 +98,7 @@ public class ServiceLayerTest {
 
     @Test
     public void deleteInvoice() {
-        OrderViewModel order = service.getInvoice(1);
+        InvoiceViewModel order = service.getInvoice(1);
         service.deleteInvoice(1);
         ArgumentCaptor<Integer> postCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(invoiceDao).deleteInvoice(postCaptor.capture());
@@ -108,7 +108,7 @@ public class ServiceLayerTest {
     @Test
     public void updateInvoice() {
 
-        OrderViewModel order = new OrderViewModel();
+        InvoiceViewModel order = new InvoiceViewModel();
         order.setInvoiceId(2);
         order.setCustomerId(3);
         order.setPurchaseDate(LocalDate.of(2019, 5, 10));
@@ -124,7 +124,7 @@ public class ServiceLayerTest {
     @Test
     public void updateInvoiceItems() {
 
-        OrderViewModel order = new OrderViewModel();
+        InvoiceViewModel order = new InvoiceViewModel();
         order.setInvoiceId(2);
         order.setCustomerId(3);
         order.setPurchaseDate(LocalDate.of(2019, 5, 10));
@@ -163,29 +163,29 @@ public class ServiceLayerTest {
 
         invoiceItems.add(invoiceItem);
 
-        OrderViewModel order = new OrderViewModel();
+        InvoiceViewModel order = new InvoiceViewModel();
         order.setInvoiceId(1);
         order.setCustomerId(1);
         order.setPurchaseDate(LocalDate.of(2019, 7, 15));
         order.setInvoiceItems(invoiceItems);
 
-        OrderViewModel o2 = new OrderViewModel();
+        InvoiceViewModel o2 = new InvoiceViewModel();
         o2.setInvoiceId(2);
         o2.setCustomerId(2);
         o2.setPurchaseDate(LocalDate.of(2019, 5, 10));
         o2.setInvoiceItems(new ArrayList<>());
 
-        List<OrderViewModel> invoicesCust1 = new ArrayList<>();
+        List<InvoiceViewModel> invoicesCust1 = new ArrayList<>();
         invoicesCust1.add(order);
 
-        List<OrderViewModel> invoicesCust2 = new ArrayList<>();
+        List<InvoiceViewModel> invoicesCust2 = new ArrayList<>();
         invoicesCust2.add(o2);
 
-        List<OrderViewModel> invoicesForCust1FromService= service.getInvoicesByCustomerId(1);
+        List<InvoiceViewModel> invoicesForCust1FromService= service.getInvoicesByCustomerId(1);
 
         assertEquals(invoicesCust1, invoicesForCust1FromService);
 
-        List<OrderViewModel> invoicesForCust2FromService= service.getInvoicesByCustomerId(2);
+        List<InvoiceViewModel> invoicesForCust2FromService= service.getInvoicesByCustomerId(2);
 
         assertEquals(invoicesCust2, invoicesForCust2FromService);
     }

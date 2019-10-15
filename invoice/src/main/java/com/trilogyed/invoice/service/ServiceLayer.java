@@ -4,7 +4,7 @@ import com.trilogyed.invoice.dao.InvoiceDao;
 import com.trilogyed.invoice.dao.InvoiceItemDao;
 import com.trilogyed.invoice.model.Invoice;
 import com.trilogyed.invoice.model.InvoiceItem;
-import com.trilogyed.invoice.viewModel.OrderViewModel;
+import com.trilogyed.invoice.model.InvoiceViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,85 +25,90 @@ public class ServiceLayer {
     }
 
     @Transactional
-    public OrderViewModel addInvoice(OrderViewModel ovm) {
+    public InvoiceViewModel addInvoice(InvoiceViewModel ivm) {
         Invoice invoice = new Invoice();
-        invoice.setCustomerId(ovm.getCustomerId());
-        invoice.setPurchaseDate(ovm.getPurchaseDate());
+        invoice.setCustomerId(ivm.getCustomerId());
+        invoice.setPurchaseDate(ivm.getPurchaseDate());
         invoice = invoiceDao.addInvoice(invoice);
 
-        if (ovm.getInvoiceItems() == null) {
-            ovm.setInvoiceItems(new ArrayList<>());
+        if (ivm.getInvoiceItems() == null) {
+            ivm.setInvoiceItems(new ArrayList<>());
         }
-        for(InvoiceItem item: ovm.getInvoiceItems()){
+        for(InvoiceItem ii: ivm.getInvoiceItems()){
             InvoiceItem invoiceItem = new InvoiceItem();
-            invoiceItem.setQuantity(item.getQuantity());
+            invoiceItem.setQuantity(ii.getQuantity());
             invoiceItem.setInvoiceId(invoice.getInvoiceId());
-            invoiceItem.setUnitPrice(item.getUnitPrice());
-            invoiceItem.setInventoryId(item.getInventoryId());
+            invoiceItem.setUnitPrice(ii.getUnitPrice());
+            invoiceItem.setInventoryId(ii.getInventoryId());
             invoiceItemDao.addInvoiceItem(invoiceItem);
         }
-        return buildOrderViewModel(invoice);
+        return buildInvoiceViewModel(invoice);
     }
 
-    public OrderViewModel getInvoice(int id) {
+
+    public InvoiceViewModel getInvoice(int id) {
+
         Invoice invoice = invoiceDao.getInvoice(id);
         if(invoice == null )
             return null;
         else
-            return buildOrderViewModel(invoice);
+            return buildInvoiceViewModel(invoice);
     }
 
-    public void updateInvoice(OrderViewModel ovm, int id) {
+
+    public void updateInvoice(InvoiceViewModel ivm, int id) {
+
 
         Invoice invoice = new Invoice();
         invoice.setInvoiceId(id);
-        invoice.setCustomerId(ovm.getCustomerId());
-        invoice.setPurchaseDate(ovm.getPurchaseDate());
+        invoice.setCustomerId(ivm.getCustomerId());
+        invoice.setPurchaseDate(ivm.getPurchaseDate());
         invoiceDao.updateInvoice(invoice);
+
 
         invoiceItemDao.getInvoiceItemsByInvoiceId(id)
                 .forEach(ii -> invoiceItemDao.deleteInvoiceItem(ii.getInvoiceItemId()));
-        for(InvoiceItem item: ovm.getInvoiceItems()){
+        for(InvoiceItem ii: ivm.getInvoiceItems()){
             InvoiceItem invoiceItem = new InvoiceItem();
-            invoiceItem.setQuantity(item.getQuantity());
+            invoiceItem.setQuantity(ii.getQuantity());
             invoiceItem.setInvoiceId(invoice.getInvoiceId());
-            invoiceItem.setUnitPrice(item.getUnitPrice());
-            invoiceItem.setInventoryId(item.getInventoryId());
+            invoiceItem.setUnitPrice(ii.getUnitPrice());
+            invoiceItem.setInventoryId(ii.getInventoryId());
             invoiceItemDao.addInvoiceItem(invoiceItem);
         }
     }
 
+
     public void deleteInvoice(int id) {
+
         invoiceItemDao.getInvoiceItemsByInvoiceId(id)
-                .forEach(item -> invoiceItemDao.deleteInvoiceItem(item.getInvoiceItemId()));
+                .forEach(ii -> invoiceItemDao.deleteInvoiceItem(ii.getInvoiceItemId()));
         invoiceDao.deleteInvoice(id);
     }
 
-    public List<OrderViewModel> getAllInvoices() {
-        List<OrderViewModel> ovm = new ArrayList<>();
+
+    public List<InvoiceViewModel> getAllInvoices() {
+        List<InvoiceViewModel> ivms = new ArrayList<>();
         for (Invoice i : invoiceDao.getAllInvoices()) {
-            ovm.add(buildOrderViewModel(i));
+            ivms.add(buildInvoiceViewModel(i));
         }
-        return ovm;
+        return ivms;
     }
 
-
-    public List<OrderViewModel> getInvoicesByCustomerId(int id) {
-        List<OrderViewModel> ovm = new ArrayList<>();
+    public List<InvoiceViewModel> getInvoicesByCustomerId(int id) {
+        List<InvoiceViewModel> ivms = new ArrayList<>();
         for (Invoice i : invoiceDao.getInvoicesByCustomerId(id)) {
-            ovm.add(buildOrderViewModel(i));
+            ivms.add(buildInvoiceViewModel(i));
         }
-        return ovm;
+        return ivms;
     }
 
-    private OrderViewModel buildOrderViewModel(Invoice invoice) {
-        OrderViewModel ovm = new OrderViewModel();
-        ovm.setInvoiceId(invoice.getInvoiceId());
-        ovm.setCustomerId(invoice.getCustomerId());
-        ovm.setPurchaseDate(invoice.getPurchaseDate());
-        ovm.setInvoiceItems(invoiceItemDao.getInvoiceItemsByInvoiceId(invoice.getInvoiceId()));
-        return ovm;
+    private InvoiceViewModel buildInvoiceViewModel(Invoice invoice) {
+        InvoiceViewModel ivm = new InvoiceViewModel();
+        ivm.setInvoiceId(invoice.getInvoiceId());
+        ivm.setCustomerId(invoice.getCustomerId());
+        ivm.setPurchaseDate(invoice.getPurchaseDate());
+        ivm.setInvoiceItems(invoiceItemDao.getInvoiceItemsByInvoiceId(invoice.getInvoiceId()));
+        return ivm;
     }
-
-
 }

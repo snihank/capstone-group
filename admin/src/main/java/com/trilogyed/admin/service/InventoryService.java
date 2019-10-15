@@ -13,8 +13,6 @@ public class InventoryService {
 
     InventoryClient inventoryClient;
 
-    //constructors
-
     public InventoryService() {
     }
 
@@ -22,8 +20,6 @@ public class InventoryService {
     public InventoryService(InventoryClient inventoryClient) {
         this.inventoryClient = inventoryClient;
     }
-
-    // methods
 
     public Inventory addInventory(Inventory inventory) {
         return inventoryClient.addInventory(inventory);

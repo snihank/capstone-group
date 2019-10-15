@@ -1,9 +1,9 @@
 package com.trilogyed.retail.controller;
 
-import com.trilogyed.retail.model.OrderViewModel;
-import com.trilogyed.retail.model.OrderViewModelResponse;
+import com.trilogyed.retail.model.InvoiceViewModel;
+import com.trilogyed.retail.model.InvoiceViewModelResponse;
 import com.trilogyed.retail.model.Product;
-import com.trilogyed.retail.service.ServiceLayer;
+import com.trilogyed.retail.service.RetailApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
@@ -16,61 +16,68 @@ import java.util.List;
 
 @RestController
 @RefreshScope
-@CacheConfig(cacheNames = {"retail"})
-@RequestMapping("/")
-public class RetailController {
+@CacheConfig(cacheNames = "retail")
+public class RetailApiController {
 
     @Autowired
-    private ServiceLayer service;
+    private RetailApiService service;
 
-    @GetMapping(value = "levelup/customer/{id}")
+    @Autowired
+    public RetailApiController(RetailApiService service) {
+        this.service = service;
+    }
+
+    @RequestMapping(value = "/levelup/customer/{id}", method = RequestMethod.GET)
     public int getLevelUp(@PathVariable("id") int id) {
         return service.getPoints(id);
     }
 
+
     @CachePut(key = "#result.getInvoiceId()")
-    @PostMapping(value = "invoices")
-    public OrderViewModelResponse addInvoice(@RequestBody OrderViewModel ivm) {
+    @RequestMapping(value = "/invoices", method = RequestMethod.POST)
+    public InvoiceViewModelResponse addInvoice(@RequestBody InvoiceViewModel ivm) {
         return service.addInvoice(ivm);
     }
 
+
     @Cacheable
-    @RequestMapping(value = "invoices/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/invoices/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public OrderViewModel getInvoice(@PathVariable("id") int id){
+    public InvoiceViewModel getInvoice(@PathVariable("id") int id){
         return service.getInvoice(id);
     }
 
 
-    @GetMapping(value = "invoices")
+    @RequestMapping(value = "/invoices", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderViewModel> getAllInvoices() {
+    public List<InvoiceViewModel> getAllInvoices() {
         return service.getAllInvoices();
     }
 
-    @GetMapping(value = "invoices/customer/{id}")
+    @RequestMapping(value = "/invoices/customer/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderViewModel> getInvoiceByCustomerId(@PathVariable("id") int id){
+    public List<InvoiceViewModel> getInvoiceByCustomerId(@PathVariable("id") int id){
         return service.getInvoicesByCustomerId(id);
     }
 
-    @GetMapping(value = "products/inventory")
+    @RequestMapping(value = "/products/inventory", method = RequestMethod.GET)
     public List<Product> getProductsInInventory() {
         return service.getProductsInInventory();
     }
 
+
     @Cacheable
-    @GetMapping(value = "products/{id}")
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Product getProduct(@PathVariable int id) {
         return service.getProduct(id);
     }
 
+
     @Cacheable
-    @GetMapping(value = "products/invoice/{id}")
+    @RequestMapping(value = "/products/invoice/{id}", method = RequestMethod.GET)
     public List<Product> getProductsByInvoiceId(@PathVariable int id) {
         return service.getProductsByInvoiceId(id);
     }
-
 
 }

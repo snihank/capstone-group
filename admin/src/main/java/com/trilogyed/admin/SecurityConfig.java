@@ -50,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.DELETE, "/inventory/{id}").hasAnyAuthority("ADMIN")
                 .mvcMatchers(HttpMethod.PUT, "/inventory/{id}").hasAnyAuthority("ADMIN","MANAGER","TEAM_LEAD","EMPLOYEE") // employee can update inventory
                 /*******************************FOR LEVEL-UP ********************************************************/
-                .mvcMatchers(HttpMethod.POST, "/levelup").hasAnyAuthority("ADMIN","MANAGER")
-                .mvcMatchers(HttpMethod.DELETE, "/levelup/{id}").hasAnyAuthority("ADMIN")
-                .mvcMatchers(HttpMethod.PUT, "/levelup").hasAnyAuthority("ADMIN","MANAGER","TEAM_LEAD")
+                .mvcMatchers(HttpMethod.POST, "/levelups").hasAnyAuthority("ADMIN","MANAGER")
+                .mvcMatchers(HttpMethod.DELETE, "/levelups/{id}").hasAnyAuthority("ADMIN")
+                .mvcMatchers(HttpMethod.PUT, "/levelups").hasAnyAuthority("ADMIN","MANAGER","TEAM_LEAD")
                 /*******************************FOR PRODUCT ********************************************************/
                 .mvcMatchers(HttpMethod.POST, "/products").hasAnyAuthority("ADMIN","MANAGER")
                 .mvcMatchers(HttpMethod.DELETE, "/products/{id}").hasAnyAuthority("ADMIN")

@@ -17,22 +17,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ServiceLayer {
+public class RetailApiService {
 
     private static final String EXCHANGE = "levelup-exchange";
     private static final String ROUTING_KEY = "levelup.create.retail.service";
 
+    @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
     private CustomerClient customerClient;
+    @Autowired
     private InventoryClient inventoryClient;
+    @Autowired
     private LevelUpClient levelUpClient;
+    @Autowired
     private InvoiceClient invoiceClient;
+    @Autowired
     private ProductClient productClient;
 
     private final RestTemplate restTemplate;
 
-    @Autowired
-    public ServiceLayer(
+    public RetailApiService(
             RabbitTemplate rabbitTemplate, CustomerClient customerClient,
             InventoryClient inventoryClient, LevelUpClient levelUpClient,
             InvoiceClient invoiceClient, ProductClient productClient, RestTemplate restTemplate) {
@@ -45,42 +50,61 @@ public class ServiceLayer {
         this.restTemplate = restTemplate;
     }
 
+
+
     @Transactional
-    public OrderViewModelResponse addInvoice(OrderViewModel ovm) {
+    public InvoiceViewModelResponse addInvoice(InvoiceViewModel ivm) {
 
-        if (customerClient.getCustomer(ovm.getCustomerId()) == null) {
-            throw new IllegalArgumentException("Customer does not exist");
+        try{
+            checkIfCustomer(ivm);
+        }catch(RuntimeException e){
+            throw new IllegalArgumentException("NO customer found for id " + ivm.getCustomerId());
         }
 
-        checkStock(ovm);
+        validateInvoiceItems(ivm);
 
-        OrderViewModelResponse ovmr = new OrderViewModelResponse();
-        ovmr.setCustomerId(ovm.getCustomerId());
-        ovmr.setInvoiceItems(ovm.getInvoiceItems());
+        InvoiceViewModelResponse ivmRes = new InvoiceViewModelResponse();
+        ivmRes.setCustomerId(ivm.getCustomerId());
+        ivmRes.setInvoiceItems(ivm.getInvoiceItems());
 
-        OrderViewModel o = invoiceClient.addInvoice(ovm);
+        InvoiceViewModel invoiceVM = invoiceClient.addInvoice(ivm);
 
-        ovmr.setInvoiceId(o.getInvoiceId());
-        ovmr.setPurchaseDate(o.getPurchaseDate());
+        ivmRes.setInvoiceId(invoiceVM.getInvoiceId());
+        ivmRes.setPurchaseDate(invoiceVM.getPurchaseDate());
 
-        List<InvoiceItem> invoiceItems = ovmr.getInvoiceItems();
-        for (int i = 0; i < ovmr.getInvoiceItems().size(); i++) {
-            invoiceItems.get(i).setInvoiceId(o.getInvoiceId());
-            invoiceItems.get(i).setInvoiceItemId(o.getInvoiceItems().get(i).getInvoiceItemId());
+        List<InvoiceItem> invoiceItems = ivmRes.getInvoiceItems();
+        for (int i = 0; i < ivmRes.getInvoiceItems().size(); i++) {
+            invoiceItems.get(i).setInvoiceId(invoiceVM.getInvoiceId());
+            invoiceItems.get(i).setInvoiceItemId(invoiceVM.getInvoiceItems().get(i).getInvoiceItemId());
         }
 
-        Integer points = calculatePoints(ovm);
-        ovmr.setPoints(points);
+        Integer points = calculatePoints(ivm);
 
-        return ovmr;
+        ivmRes.setPoints(points);
+
+        return ivmRes;
     }
 
-    public void checkStock(OrderViewModel ovm) {
 
-        ovm.getInvoiceItems().forEach(ii -> {
+    /**
+     * Checks for an existing customer
+     * @param ivm InvoiceViewModel
+     */
+    public void checkIfCustomer(InvoiceViewModel ivm) {
+        if (customerClient.getCustomer(ivm.getCustomerId()) == null) {
+            throw new IllegalArgumentException("There is no customer matching the given id");
+        }
+    }
+
+    /**
+     * Handle invoice item validation
+     * @param ivm InvoiceViewModel
+     */
+    public void validateInvoiceItems(InvoiceViewModel ivm) {
+
+        ivm.getInvoiceItems().forEach(ii -> {
 
             Inventory inventory = inventoryClient.getInventory(ii.getInventoryId());
-
             if (inventory == null) {
                 throw new IllegalArgumentException("Inventory id " + ii.getInventoryId() + " is not valid");
             }
@@ -88,29 +112,37 @@ public class ServiceLayer {
             int quantityInStock = inventory.getQuantity();
 
             if (ii.getQuantity() > quantityInStock || ii.getQuantity() < 0) {
-                throw new InsufficientQuantityException("Insufficient Stock");
+                throw new InsufficientQuantityException("We do not have that quantity.");
             }
 
+            // throw exception if item does not exist
             if (productClient.getProduct(inventory.getProductId()) == null) {
-                throw new IllegalArgumentException("No Product with this id: " + inventory.getProductId());
+                throw new IllegalArgumentException("Product " + inventory.getProductId() + " does not exist");
             }
 
         });
 
     }
 
-    public Integer calculatePoints(OrderViewModel ovm) {
+    /**
+     * Sends info to queue, gets info from circuit breaker
+     * @param ivm
+     * @return
+     */
+    public Integer calculatePoints(InvoiceViewModel ivm) {
 
         BigDecimal invoiceTotal = new BigDecimal("0");
-        for (InvoiceItem ii : ovm.getInvoiceItems()) {
+        for (InvoiceItem ii : ivm.getInvoiceItems()) {
             BigDecimal itemTotal = ii.getUnitPrice().multiply(new BigDecimal(ii.getQuantity()));
             invoiceTotal = invoiceTotal.add(itemTotal);
         }
 
+
         Integer pointsEarned =  invoiceTotal.divide(new BigDecimal("50")
                 .setScale(0, BigDecimal.ROUND_FLOOR), BigDecimal.ROUND_FLOOR).intValue();
 
-        Integer previousPoints = getPoints(ovm.getCustomerId());
+
+        Integer previousPoints = getPoints(ivm.getCustomerId());
 
         int totalPoints = pointsEarned;
 
@@ -119,14 +151,14 @@ public class ServiceLayer {
         }
 
         if (previousPoints == null) {
-            LevelUp levelUp = new LevelUp(ovm.getCustomerId(), pointsEarned, LocalDate.now());
+            LevelUp levelUp = new LevelUp(ivm.getCustomerId(), pointsEarned, LocalDate.now());
             rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, levelUp);
         }
 
         else {
             LevelUp levelUp = new LevelUp(
-                    levelUpClient.getLevelUpByCustomerId(ovm.getCustomerId()).getLevelUpId(),
-                    ovm.getCustomerId(),
+                    levelUpClient.getLevelUpByCustomerId(ivm.getCustomerId()).getLevelUpId(),
+                    ivm.getCustomerId(),
                     totalPoints,
                     LocalDate.now());
             rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, levelUp);
@@ -136,7 +168,7 @@ public class ServiceLayer {
 
     }
 
-    @HystrixCommand(fallbackMethod = "fallBack")
+    @HystrixCommand(fallbackMethod = "getPointsFallback")
     public Integer getPoints(int customerId) {
         if (levelUpClient.getLevelUpByCustomerId(customerId) == null) {
             return null;
@@ -145,23 +177,25 @@ public class ServiceLayer {
         }
     }
 
-    public Integer fallBack(int customerId){
+
+    public Integer getPointsFallback(int customerId){
         throw new NotFoundException("LevelUp could not be retrieved for customer id " + customerId);
     }
 
 
-    public OrderViewModel getInvoice(int id) {
+    public InvoiceViewModel getInvoice(int id) {
         return invoiceClient.getInvoice(id);
     }
 
-    public List<OrderViewModel> getAllInvoices() {
-        List<OrderViewModel> invoices = invoiceClient.getAllInvoices();
-        return invoices;
+    public List<InvoiceViewModel> getAllInvoices() {
+        List<InvoiceViewModel> invoices = invoiceClient.getAllInvoices();
+        return invoiceClient.getAllInvoices();
     }
 
-    public List<OrderViewModel> getInvoicesByCustomerId(int id) {
-        return invoiceClient.getInvoiceByCustomerId(id);
+    public List<InvoiceViewModel> getInvoicesByCustomerId(int id) {
+        return invoiceClient.getInvoicesByCustomerId(id);
     }
+
 
     public Product getProduct(int id) {
         return productClient.getProduct(id);
@@ -170,11 +204,10 @@ public class ServiceLayer {
     public List<Product> getProductsInInventory() {
 
         List<Product> products = new ArrayList<>();
-
         List<Inventory> inventory = inventoryClient.getAllInventory();
 
         inventory.forEach(ii ->
-                products.add(productClient.getProduct(ii.getProductId())));
+            products.add(productClient.getProduct(ii.getProductId())));
 
         return products;
 
@@ -184,7 +217,7 @@ public class ServiceLayer {
 
         List<Product> products = new ArrayList<>();
 
-        OrderViewModel invoice = invoiceClient.getInvoice(id);
+        InvoiceViewModel invoice = invoiceClient.getInvoice(id);
 
         invoice.getInvoiceItems().forEach(ii -> {
 

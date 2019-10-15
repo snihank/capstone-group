@@ -22,10 +22,10 @@ public class InventoryServiceTest {
     @Before
     public void setUp() throws Exception {
 
-        // configure mock objects
+
         setUpInventoryMock();
 
-        // Passes mock objects
+
         inventoryService = new InventoryService(inventoryDao);
 
     }
@@ -100,7 +100,7 @@ public class InventoryServiceTest {
 
     }
 
-    // tests if will return null if try to get inventory with non-existent id
+
     @Test
     public void getInventoryWithNonExistentId() {
         Inventory inventory = inventoryService.getInvenotry(500);

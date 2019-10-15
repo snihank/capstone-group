@@ -12,7 +12,6 @@ public class LevelUpService {
 
     LevelUpClient levelUpClient;
 
-    // constructors
 
     public LevelUpService() {
     }
@@ -22,7 +21,6 @@ public class LevelUpService {
         this.levelUpClient = levelUpClient;
     }
 
-    // methods
 
     public LevelUp addLevelUp(LevelUp levelUp) {
         return levelUpClient.addLevelUp(levelUp);

@@ -14,16 +14,12 @@ public class ProductService {
     @Autowired
     private ProductClient productClient;
 
-    // constructors
-
     public ProductService() {
     }
 
     public ProductService(ProductClient productClient) {
         this.productClient = productClient;
     }
-
-    // methods
 
     public Product addProduct(Product product) {
         return productClient.addProduct(product);

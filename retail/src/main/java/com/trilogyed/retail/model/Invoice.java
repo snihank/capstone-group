@@ -10,24 +10,26 @@ import java.util.Objects;
 
 public class Invoice implements Serializable {
 
-
-    private int invoiceId;
+    protected int invoiceId;
     @NotNull(message = "Please supply a customer id.")
     @Positive
-    private Integer customerId;
-    private LocalDate purchaseDate;
+    protected Integer customerId;
+    protected LocalDate purchaseDate;
     @Valid
     private List<InvoiceItem> invoiceItems;
+
 
     public Invoice() {
     }
 
-    public Invoice(int invoiceId, @NotNull(message = "Please supply a customer id.") @Positive Integer customerId, LocalDate purchaseDate, @Valid List<InvoiceItem> invoiceItems) {
+    public Invoice(int invoiceId, Integer customerId, LocalDate purchaseDate, List<InvoiceItem> invoiceItems) {
         this.invoiceId = invoiceId;
         this.customerId = customerId;
         this.purchaseDate = purchaseDate;
         this.invoiceItems = invoiceItems;
     }
+
+    // getters and setters
 
     public int getInvoiceId() {
         return invoiceId;
@@ -41,7 +43,7 @@ public class Invoice implements Serializable {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
 
@@ -61,19 +63,52 @@ public class Invoice implements Serializable {
         this.invoiceItems = invoiceItems;
     }
 
+    // override methods
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Invoice)) return false;
-        Invoice invoice = (Invoice) o;
-        return getInvoiceId() == invoice.getInvoiceId() &&
-                getCustomerId().equals(invoice.getCustomerId()) &&
-                getPurchaseDate().equals(invoice.getPurchaseDate()) &&
-                getInvoiceItems().equals(invoice.getInvoiceItems());
+        if (o == null || getClass() != o.getClass()) return false;
+        Invoice that = (Invoice) o;
+
+        boolean check = false;
+        if(getInvoiceId() == that.getInvoiceId()) {
+            check = true;
+        }else{
+            return false;
+        }
+        if((getCustomerId() == null && that.getCustomerId() == null) || getCustomerId().equals(that.getCustomerId())){
+            check=true;
+        }else{
+            return false;
+        }
+        if((getPurchaseDate() == null && that.getPurchaseDate() == null) || getPurchaseDate().equals(that.getPurchaseDate())){
+            check = true;
+        }else{
+            return false;
+        }
+        if((getInvoiceItems() == null && that.getInvoiceItems() == null) || getInvoiceItems().equals(that.getInvoiceItems())){
+            check = true;
+        }else{
+            return false;
+        }
+        return check ;
+
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getInvoiceId(), getCustomerId(), getPurchaseDate(), getInvoiceItems());
     }
+
+    @Override
+    public String toString() {
+        return "Invoice{" +
+                "invoiceId=" + invoiceId +
+                ", customerId=" + customerId +
+                ", purchaseDate=" + purchaseDate +
+                ", invoiceItems=" + invoiceItems +
+                '}';
+    }
+
 }

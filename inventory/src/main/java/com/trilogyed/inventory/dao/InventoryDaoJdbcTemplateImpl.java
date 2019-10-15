@@ -17,8 +17,6 @@ public class InventoryDaoJdbcTemplateImpl implements InventoryDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    // prepared statements
-
     private static final String INSERT_INVENTORY_SQL =
             "insert into inventory (product_id, quantity) values (?, ?)";
 
@@ -34,13 +32,9 @@ public class InventoryDaoJdbcTemplateImpl implements InventoryDao {
     private static final String SELECT_ALL_INVENTORY_SQL =
             "select * from inventory";
 
-    // constructor
-
     public InventoryDaoJdbcTemplateImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    // Map to row to interact with the database
 
     private Inventory mapRowToInventory(ResultSet rs, int rowNum) throws SQLException {
         Inventory inventory = new Inventory();
@@ -50,8 +44,6 @@ public class InventoryDaoJdbcTemplateImpl implements InventoryDao {
 
         return inventory;
     }
-
-    // implement methods
 
     @Override
     @Transactional
@@ -74,7 +66,6 @@ public class InventoryDaoJdbcTemplateImpl implements InventoryDao {
         try {
             return jdbcTemplate.queryForObject(SELECT_INVENTORY_SQL, this::mapRowToInventory, inventoryId);
         } catch (EmptyResultDataAccessException e) {
-            // if there is no match for this id, return null
             return null;
         }
     }
@@ -82,8 +73,7 @@ public class InventoryDaoJdbcTemplateImpl implements InventoryDao {
     @Override
     @Transactional
     public void updateInventory(Inventory inventory) {
-        // checks for id first so user knows if anything was updated
-        // user could have unknowingly entered the wrong id
+
         Inventory inventoryInDB = getInventory(inventory.getInventoryId());
         if (inventoryInDB == null) {
             throw new IllegalArgumentException("The id provided does not exist.");
@@ -99,7 +89,6 @@ public class InventoryDaoJdbcTemplateImpl implements InventoryDao {
     @Override
     @Transactional
     public void deleteInventory(int inventoryId) {
-        // checks for id first so user knows if anything was deleted
         Inventory inventoryInDB = getInventory(inventoryId);
         if (inventoryInDB == null) {
             throw new NotFoundException("The id provided does not exist.");

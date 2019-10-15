@@ -66,8 +66,7 @@ public class LevelUpDaoJdcbTemplateImpl implements LevelUpDao {
     @Override
     @Transactional
     public void updateLevelUp(LevelUp levelUp) {
-        // checks for id first so user knows if anything was updated
-        // user could have unknowingly entered the wrong id
+
         if (getLevelUp(levelUp.getLevelUpId()) == null) {
             throw new IllegalArgumentException("Level up id not found");
         }
@@ -83,8 +82,7 @@ public class LevelUpDaoJdcbTemplateImpl implements LevelUpDao {
     @Override
     @Transactional
     public void deleteLevelUp(int id) {
-        // checks for id first so user knows if anything was deleted
-        // user could have unknowingly entered the wrong id
+
         if (getLevelUp(id) == null) {
             throw new NotFoundException("Level up id not found");
         }
@@ -94,7 +92,7 @@ public class LevelUpDaoJdcbTemplateImpl implements LevelUpDao {
 
     @Override
     public List<LevelUp> getAllLevelUps() {
-        // will return an empty list, not null, if there are no level ups
+
         return jdbc.query(SELECT_ALL_LEVEL_UPS, this::mapRowToLevelUp);
     }
 
@@ -104,17 +102,17 @@ public class LevelUpDaoJdcbTemplateImpl implements LevelUpDao {
             LevelUp levelUp = jdbc.queryForObject(SELECT_POINTS_BY_CUSTOMER_ID, this::mapRowToLevelUp, customerId);
             return levelUp;
         }
-        // database will throw this exception if the customer id does not exist
+
         catch (EmptyResultDataAccessException e) {
             return null;
         }
-        // database will throw this exception if there are multiple rows with the customer id
+
         catch (IncorrectResultSizeDataAccessException i) {
             throw new AmbiguousResultException("Points could not be determined due to multiple level ups with the provided customer id.");
         }
     }
 
-    // mapper
+
     private LevelUp mapRowToLevelUp(ResultSet rs, int rowNum) throws SQLException {
         LevelUp levelUp = new LevelUp();
         levelUp.setLevelUpId(rs.getInt("level_up_id"));

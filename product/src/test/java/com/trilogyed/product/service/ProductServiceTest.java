@@ -24,10 +24,10 @@ public class ProductServiceTest {
     @Before
     public void setUp() throws Exception {
 
-        // configure mock objects
+
         setUpProductMock();
 
-        // Passes mock objects
+
         productService = new ProductService(productDao);
 
     }
@@ -98,7 +98,7 @@ public class ProductServiceTest {
         assertEquals(product.getProductId(), postCaptor.getValue().intValue());
     }
 
-    // tests updateProduct()
+
     @Test
     public void updateProduct() {
 
@@ -117,7 +117,7 @@ public class ProductServiceTest {
 
     }
 
-    // tests if will return null if try to get product with non-existent id
+
     @Test
     public void getProductWithNonExistentId() {
         Product product = productService.getProduct(500);

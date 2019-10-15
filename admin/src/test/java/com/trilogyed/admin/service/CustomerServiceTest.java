@@ -30,12 +30,10 @@ public class CustomerServiceTest {
 
         MockitoAnnotations.initMocks(this);
 
-        // configure mock objects
         setUpCustomerClientMock();
 
     }
 
-    // tests addCustomer()
     @Test
     public void addCustomer() {
         Customer customer = new Customer();
@@ -54,7 +52,6 @@ public class CustomerServiceTest {
         assertEquals(customer, customer1);
     }
 
-    // tests getCustomer()
     @Test
     public void getCustomer() {
 
@@ -73,7 +70,7 @@ public class CustomerServiceTest {
         assertEquals(customer, customer1);
     }
 
-    // tests getAllCustomers()
+
     @Test
     public void findAllCustomers() {
 
@@ -105,7 +102,7 @@ public class CustomerServiceTest {
 
     }
 
-    // tests deleteCustomer()
+
     @Test
     public void deleteCustomer() {
         Customer customer = customerService.getCustomer(1);
@@ -115,7 +112,7 @@ public class CustomerServiceTest {
         assertEquals(customer.getCustomerId(), postCaptor.getValue().intValue());
     }
 
-    // tests updateCustomer()
+
     @Test
     public void updateCustomer() {
 
@@ -135,14 +132,13 @@ public class CustomerServiceTest {
 
     }
 
-    // tests if will return null if try to get customer with non-existent id
+
     @Test
     public void getCustomerWithNonExistentId() {
         Customer customer = customerService.getCustomer(500);
         assertNull(customer);
     }
 
-    /**************************Helper Method ****************************************************/
 
     public void setUpCustomerClientMock() {
 

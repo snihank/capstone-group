@@ -1,8 +1,8 @@
 package com.trilogyed.invoice.controller;
 
 import com.trilogyed.invoice.exception.NotFoundException;
+import com.trilogyed.invoice.model.InvoiceViewModel;
 import com.trilogyed.invoice.service.ServiceLayer;
-import com.trilogyed.invoice.viewModel.OrderViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RefreshScope
-@RequestMapping("/invoice")
+@RequestMapping("/invoices")
 @CacheConfig(cacheNames = {"invoices"})
 public class InvoiceController {
 
@@ -25,24 +25,24 @@ public class InvoiceController {
     @Autowired
     ServiceLayer service;
 
-//    @CachePut(key = "#result.getInvoiceId()")
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderViewModel addInvoice(@RequestBody @Valid OrderViewModel ovm){
+    public InvoiceViewModel addInvoice(@RequestBody @Valid InvoiceViewModel ovm){
         return service.addInvoice(ovm);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderViewModel> getAllInvoices(){
+    public List<InvoiceViewModel> getAllInvoices(){
         return service.getAllInvoices();
     }
 
     @Cacheable
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderViewModel getInvoice(@PathVariable("id") int id){
-        OrderViewModel invoice = service.getInvoice(id);
+    public InvoiceViewModel getInvoice(@PathVariable("id") int id){
+        InvoiceViewModel invoice = service.getInvoice(id);
         if (invoice == null) {
             throw new NotFoundException("Invoice could not be retrieved for id " + id);
         }
@@ -52,7 +52,7 @@ public class InvoiceController {
     @CacheEvict(key = "#ovm.getInvoiceId()")
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String updateInvoice(@RequestBody @Valid OrderViewModel ovm, @PathVariable("id") int id){
+    public String updateInvoice(@RequestBody @Valid InvoiceViewModel ovm, @PathVariable("id") int id){
         service.updateInvoice(ovm, id);
         return "Invoice successfully updated";
     }
@@ -67,7 +67,7 @@ public class InvoiceController {
 
     @GetMapping("/customer/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderViewModel> getInvoiceByCustomerId(@PathVariable("id") int id){
+    public List<InvoiceViewModel> getInvoiceByCustomerId(@PathVariable("id") int id){
         return service.getInvoicesByCustomerId(id);
     }
 

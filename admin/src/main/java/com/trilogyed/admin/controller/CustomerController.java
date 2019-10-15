@@ -25,8 +25,6 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    // adds the return value of the method to the cache using customer id as the key
-    // handles requests to add a customer
     @CachePut(key = "#result.getCustomerId()")
     @RequestMapping(value = "/customers", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,8 +32,6 @@ public class CustomerController {
         return customerService.addCustomer(customer);
     }
 
-    // caches the result of the method - it automatically uses id as the key
-    // handles requests to retrieve a customer by customer id
     @Cacheable
     @RequestMapping(value = "/customers/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -44,8 +40,6 @@ public class CustomerController {
         return customer;
     }
 
-    // removes customer with given customer id as the key from the cache
-    // handles requests to update a customer with a matching id
     @CacheEvict(key = "#customer.getCustomerId()")
     @RequestMapping(value = "/customers/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,8 +52,7 @@ public class CustomerController {
         customerService.updateCustomer(id, customer);
     }
 
-    // removes customer with given customer id as the key from the cache
-    // handles requests to delete a customer by id
+
     @CacheEvict
     @RequestMapping(value = "/customers/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -67,8 +60,7 @@ public class CustomerController {
         customerService.deleteCustomer(id);
     }
 
-    // didn't cache b/c result would change frequently as customers are added
-    // handles requests to retrieve all customers
+
     @RequestMapping(value = "/customers", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Customer> getAllCustomers() {

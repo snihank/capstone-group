@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface InventoryDao {
 
-    // standard CRUD
-
     Inventory addInventory(Inventory inventory);
 
     Inventory getInventory(int inventoryId);

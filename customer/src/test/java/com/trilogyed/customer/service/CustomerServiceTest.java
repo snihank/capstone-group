@@ -22,15 +22,15 @@ public class CustomerServiceTest {
     @Before
     public void setUp() throws Exception {
 
-        // configure mock objects
+
         setUpCustomerMock();
 
-        // Passes mock objects
+
         customerService = new CustomerService(customerDao);
 
     }
 
-    // tests addCustomer()
+
     @Test
     public void addCustomer() {
         Customer customer = new Customer();
@@ -49,7 +49,7 @@ public class CustomerServiceTest {
         assertEquals(customer, customer1);
     }
 
-    // tests getCustomer()
+
     @Test
     public void getCustomer() {
 
@@ -68,7 +68,7 @@ public class CustomerServiceTest {
         assertEquals(customer, customer1);
     }
 
-    // tests getAllCustomers()
+
     @Test
     public void findAllCustomers() {
 
@@ -100,7 +100,7 @@ public class CustomerServiceTest {
 
     }
 
-    // tests deleteCustomer()
+
     @Test
     public void deleteCustomer() {
         Customer customer = customerService.getCustomer(1);
@@ -110,7 +110,7 @@ public class CustomerServiceTest {
         assertEquals(customer.getCustomerId(), postCaptor.getValue().intValue());
     }
 
-    // tests updateCustomer()
+
     @Test
     public void updateCustomer() {
 
@@ -120,7 +120,7 @@ public class CustomerServiceTest {
         customer.setStreet("2380 W US Hwy 89");
         customer.setCity("Hollis");
         customer.setZip("11423");
-        customer.setEmail("bernie@gmail.com"); // instead of yahoo it's gmail
+        customer.setEmail("bernie@gmail.com");
         customer.setPhone("724-879-9234");
 
         customerService.updateCustomer(customer);
@@ -130,14 +130,14 @@ public class CustomerServiceTest {
 
     }
 
-    // tests if will return null if try to get customer with non-existent id
+
     @Test
     public void getCustomerWithNonExistentId() {
         Customer customer = customerService.getCustomer(500);
         assertNull(customer);
     }
 
-    // Create mocks
+
 
     public void setUpCustomerMock() {
 

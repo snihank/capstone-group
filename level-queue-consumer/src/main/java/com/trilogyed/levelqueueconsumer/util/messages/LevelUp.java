@@ -19,7 +19,6 @@ public class LevelUp {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate memberDate;
 
-    // constructors
 
     public LevelUp() {
     }
@@ -31,7 +30,7 @@ public class LevelUp {
         this.memberDate = memberDate;
     }
 
-// getters and setters
+
 
     public int getLevelUpId() {
         return levelUpId;
@@ -50,7 +49,7 @@ public class LevelUp {
     }
 
     public Integer getPoints() {
-        // helps avoid NullPointer Exceptions when doing calculations
+
         if (points == null) {
             return 0;
         }
@@ -69,7 +68,7 @@ public class LevelUp {
         this.memberDate = memberDate;
     }
 
-    // override methods
+
 
     @Override
     public boolean equals(Object o) {

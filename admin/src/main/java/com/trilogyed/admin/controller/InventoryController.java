@@ -15,20 +15,15 @@ import java.util.List;
 @RefreshScope
 public class InventoryController {
 
-    // *** These routes were not cached because inventory quantity
-    // *** changes too frequently
-
     @Autowired
     InventoryService inventoryService;
 
-    // handles requests to add an inventory
     @RequestMapping(value = "/inventory", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Inventory addInventory(@RequestBody @Valid Inventory inventory) {
         return inventoryService.addInventory(inventory);
     }
 
-    // handles requests to retrieve an inventory by inventory id
     @RequestMapping(value = "/inventory/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Inventory getInventory(@PathVariable int id) {
@@ -36,7 +31,6 @@ public class InventoryController {
         return inventory;
     }
 
-    // handles requests to update an inventory with a matching id
     @RequestMapping(value = "/inventory/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateInventory(@PathVariable int id, @RequestBody @Valid Inventory inventory) {
@@ -48,14 +42,12 @@ public class InventoryController {
         inventoryService.updateInventory(id, inventory);
     }
 
-    // handles requests to delete an inventory by inventory id
     @RequestMapping(value = "/inventory/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteInventory(@PathVariable int id) {
         inventoryService.deleteInventory(id);
     }
 
-    // handles requests to retrieve all inventory
     @RequestMapping(value = "/inventory", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Inventory> getAllInventory() {

@@ -35,7 +35,7 @@ public class InventoryController {
         return inventory;
     }
 
-    // handles requests to update an inventory with a matching id
+
     @RequestMapping(value = "/inventory/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateInventory(@PathVariable int id, @RequestBody @Valid Inventory inventory) {

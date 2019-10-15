@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RefreshScope
-@RequestMapping("/levelup")
+@RequestMapping("/levelups")
 public class LevelUpController {
 
     @Autowired
@@ -36,9 +36,8 @@ public class LevelUpController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public String updateLevelUp(@PathVariable int id, @RequestBody @Valid LevelUp levelUp) {
+    public void updateLevelUp(@PathVariable int id, @RequestBody @Valid LevelUp levelUp) {
         service.updateLevelUp(levelUp);
-        return "Level up successfully updated";
     }
 
     @DeleteMapping("/{id}")

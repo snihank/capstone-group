@@ -13,8 +13,6 @@ public class InvoiceService {
 
     InvoiceClient invoiceClient;
 
-    // constructors
-
     public InvoiceService() {
     }
 
@@ -22,8 +20,6 @@ public class InvoiceService {
     public InvoiceService(InvoiceClient invoiceClient) {
         this.invoiceClient = invoiceClient;
     }
-
-    // methods
 
     public Invoice addInvoice(Invoice ivm) {
         return invoiceClient.addInvoice(ivm);

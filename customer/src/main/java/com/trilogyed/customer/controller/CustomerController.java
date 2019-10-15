@@ -30,7 +30,6 @@ public class CustomerController {
         return customerService.addCustomer(customer);
     }
 
-    // caches the result of the method - it automatically uses id as the key
 
     @Cacheable
     @RequestMapping(value = "/customers/{id}", method = RequestMethod.GET)
@@ -54,7 +53,6 @@ public class CustomerController {
         customerService.updateCustomer(customer);
     }
 
-    // removes customer with given customer id as the key from the cache
     @CacheEvict
     @RequestMapping(value = "/customers/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

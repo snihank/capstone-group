@@ -23,7 +23,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    // constructors
+
 
     public ProductController() {
     }
@@ -32,10 +32,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // Product Routes
 
-    // adds the return value of the method to the cache using product id as the key
-    // handles requests to add a product
     @CachePut(key = "#result.getProductId()")
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,8 +40,6 @@ public class ProductController {
         return productService.addProduct(product);
     }
 
-    // caches the result of the method - it automatically uses id as the key
-    // handles requests to retrieve a product by product id
     @Cacheable
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -53,8 +48,6 @@ public class ProductController {
         return product;
     }
 
-    // removes product with given product id as the key from the cache
-    // handles requests to update a product with a matching id
     @CacheEvict(key = "#product.getProductId()")
     @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -67,8 +60,6 @@ public class ProductController {
         productService.updateProduct(id, product);
     }
 
-    // removes product with given product id as the key from the cache
-    // handles requests to delete a product by id
     @CacheEvict
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -76,8 +67,6 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
-    // didn't cache b/c result would change frequently as products are added
-    // handles requests to retrieve all products
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getAllProducts() {

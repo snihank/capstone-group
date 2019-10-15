@@ -23,7 +23,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    // adds the return value of the method to the cache using product id as the key
+
     @CachePut(key = "#result.getProductId()")
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -31,7 +31,7 @@ public class ProductController {
         return productService.addProduct(product);
     }
 
-    // caches the result of the method - it automatically uses id as the key
+
     @Cacheable
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -42,7 +42,7 @@ public class ProductController {
         return product;
     }
 
-    // removes product with given product id as the key from the cache
+
     @CacheEvict(key = "#product.getProductId()")
     @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -55,7 +55,7 @@ public class ProductController {
         productService.updateProduct(product);
     }
 
-    // removes product with given product id as the key from the cache
+
     @CacheEvict
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

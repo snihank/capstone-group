@@ -21,7 +21,6 @@ public class InventoryDaoJdbcTemplateImplTest {
     @Autowired
     InventoryDao inventoryDao;
 
-    // clear inventory table in database
     @Before
     public void setUp() throws Exception {
         List<Inventory> inventoryList = inventoryDao.getAllInventory();
@@ -47,21 +46,19 @@ public class InventoryDaoJdbcTemplateImplTest {
         assertNull(inventory1);
     }
 
-    // tests if will return null if try to get inventory with non-existent id
     @Test
     public void getInventoryWithNonExistentId() {
         Inventory inventory = inventoryDao.getInventory(500);
         assertNull(inventory);
     }
 
-    // tests if will throw exception if id provided does not exist when trying to delete inventory
     @Test(expected  = NotFoundException.class)
     public void deleteInventoryWithNonExistentId() {
 
         inventoryDao.deleteInventory(500);
     }
 
-    // tests updateInventory()
+
     @Test
     public void updateInventory() {
 
@@ -79,7 +76,7 @@ public class InventoryDaoJdbcTemplateImplTest {
         assertEquals(inventory, inventory1);
     }
 
-    // tests if will throw exception if id provided does not exist when trying to update inventory
+
     @Test(expected  = IllegalArgumentException.class)
     public void updateInventoryWithIllegalArgumentException() {
 
@@ -92,7 +89,7 @@ public class InventoryDaoJdbcTemplateImplTest {
 
     }
 
-    // tests getAllInventory()
+
     @Test
     public void getAllInventory() {
 

@@ -15,27 +15,25 @@ import java.util.List;
 @RefreshScope
 public class LevelUpController {
 
-    // *** These routes were not cached because level up
-    // *** points change too frequently
 
     @Autowired
     LevelUpService levelUpService;
 
-    // handles requests to add a level up
+
     @RequestMapping(value = "/levelups", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public LevelUp addLevelUp(@RequestBody @Valid LevelUp levelUp) {
         return levelUpService.addLevelUp(levelUp);
     }
 
-    // handles requests to retrieve a levelUp by levelUp id
+
     @RequestMapping(value = "/levelups/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public LevelUp getLevelUp(@PathVariable int id) {
         return levelUpService.getLevelUp(id);
     }
 
-    // handles requests to update a levelUp with a matching id
+
     @RequestMapping(value = "/levelups/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateLevelUp(@PathVariable int id, @RequestBody @Valid LevelUp levelUp) {
@@ -47,14 +45,14 @@ public class LevelUpController {
         levelUpService.updateLevelUp(id, levelUp);
     }
 
-    // handles requests to delete a levelUp by id
+
     @RequestMapping(value = "/levelups/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLevelUp(@PathVariable int id) {
         levelUpService.deleteLevelUp(id);
     }
 
-    // handles requests to retrieve all level ups
+
     @RequestMapping(value = "/levelups", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<LevelUp> getAllLevelUps() {
@@ -62,7 +60,7 @@ public class LevelUpController {
         return levelUps;
     }
 
-    // handles requests to retrieve level up points by customer id
+
     @RequestMapping(value = "/levelups/customer/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Integer getLevelUpPointsByCustomerId(@PathVariable int id) {

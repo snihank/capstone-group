@@ -17,7 +17,7 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    // prepared statements
+
 
     private static final String INSERT_CUSTOMER_SQL =
             "insert into customer (first_name, last_name, street, city, zip, email, phone) values (?, ?, ?, ?, ?, ?, ?)";
@@ -35,13 +35,13 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
     private static final String SELECT_ALL_CUSTOMERS_SQL =
             "select * from customer";
 
-    // constructor
+
 
     public CustomerDaoJdbcTemplateImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    //Map to Row
+
     private Customer mapRowToCustomer(ResultSet rs, int rowNum) throws SQLException {
         Customer customer = new Customer();
         customer.setCustomerId(rs.getInt("customer_id"));
@@ -84,7 +84,7 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
         try {
             return jdbcTemplate.queryForObject(SELECT_CUSTOMER_SQL, this::mapRowToCustomer, id);
         } catch (EmptyResultDataAccessException e) {
-            // if there is no match for this id, return null
+
             return null;
         }
     }
@@ -92,8 +92,7 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
     @Override
     @Transactional
     public void updateCustomer(Customer customer) {
-        // checks for id first so user knows if anything was updated
-        // user could have unknowingly entered the wrong id
+
         Customer customerInDB = getCustomer(customer.getCustomerId());
         if (customerInDB == null) {
             throw new IllegalArgumentException("The id provided does not exist.");
@@ -115,7 +114,7 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
     @Override
     @Transactional
     public void deleteCustomer(int id) {
-        // checks for id first so user knows if anything was deleted
+
         Customer customerInDB = getCustomer(id);
         if (customerInDB == null) {
             throw new NotFoundException("The id provided does not exist.");

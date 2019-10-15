@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface CustomerDao {
 
-    // standard CRUD
 
     Customer addCustomer(Customer customer);
 

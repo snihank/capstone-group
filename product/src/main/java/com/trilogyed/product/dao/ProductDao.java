@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface ProductDao {
 
-    // standard CRUD
-
     Product addProduct(Product product);
 
     Product getProduct(int id);

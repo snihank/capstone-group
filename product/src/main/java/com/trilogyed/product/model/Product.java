@@ -21,7 +21,6 @@ public class Product implements Serializable {
     @NotNull(message = "Please supply a unit cost.")
     private BigDecimal unitCost;
 
-    // constructors
 
     public Product() {
     }
@@ -34,7 +33,6 @@ public class Product implements Serializable {
         this.unitCost = unitCost;
     }
 
-    // getters and setters
 
     public int getProductId() {
         return productId;

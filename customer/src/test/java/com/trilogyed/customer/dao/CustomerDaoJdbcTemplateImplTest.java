@@ -22,7 +22,7 @@ public class CustomerDaoJdbcTemplateImplTest {
     @Autowired
     CustomerDao customerDao;
 
-    // clear customer table in database
+
     @Before
     public void setUp() throws Exception {
         List<Customer> customers = customerDao.getAllCustomers();
@@ -34,7 +34,7 @@ public class CustomerDaoJdbcTemplateImplTest {
     @Test
     public void addGetDeleteCustomer() {
 
-        //Populating the customer
+
         Customer customer = new Customer();
         customer.setFirstName("Robert");
         customer.setLastName("De NIro");
@@ -61,7 +61,7 @@ public class CustomerDaoJdbcTemplateImplTest {
         assertNull(customer);
     }
 
-    // throw exception if id provided does not exist when trying to delete customer
+
     @Test(expected  = NotFoundException.class)
     public void deleteCustomerWithNonExistentId() {
 
@@ -69,7 +69,7 @@ public class CustomerDaoJdbcTemplateImplTest {
 
     }
 
-    // tests updateCustomer()
+
     @Test
     public void updateCustomer() {
 
@@ -92,7 +92,6 @@ public class CustomerDaoJdbcTemplateImplTest {
         assertEquals(customer, customer1);
     }
 
-    // tests if will throw exception if id provided does not exist when trying to update customer
     @Test(expected  = IllegalArgumentException.class)
     public void updateCustomerWithIllegalArgumentException() {
 
@@ -110,7 +109,7 @@ public class CustomerDaoJdbcTemplateImplTest {
 
     }
 
-    // tests getAllCustomers()
+
     @Test
     public void getAllCustomers() {
 

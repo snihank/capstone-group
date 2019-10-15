@@ -69,11 +69,10 @@ public class InvoiceDaoJdbcTemplateImplTest {
         Invoice invoice = new Invoice();
         invoice.setCustomerId(1);
 
-        // add 2 invoices
+
         invoiceDao.addInvoice(invoice);
         invoiceDao.addInvoice(invoice);
 
-        // get all
         assertEquals(2, invoiceDao.getAllInvoices().size());
     }
 

@@ -18,14 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-public class ServiceLayerTest {
+public class RetailApiServiceTest {
 
 
     @InjectMocks
-    private ServiceLayer service;
+    private RetailApiService service;
 
     @Mock
     private ProductClient productClient;
@@ -53,7 +52,6 @@ public class ServiceLayerTest {
 
         MockitoAnnotations.initMocks(this);
 
-        // configure mock objects
         setUpProductClientMock();
         setUpInventoryClientMock();
         setUpInvoiceClientMock();
@@ -61,7 +59,6 @@ public class ServiceLayerTest {
         setUpCustomerClientMock();
 
     }
-
 
     @Test
     public void getProduct() {
@@ -106,7 +103,6 @@ public class ServiceLayerTest {
 
     }
 
-
     @Test
     public void getProductsByInvoiceId() {
 
@@ -137,13 +133,13 @@ public class ServiceLayerTest {
     @Test
     public void getInvoice() {
 
-        OrderViewModel invoiceVM = new OrderViewModel();
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
         invoiceVM.setInvoiceId(2);
         invoiceVM.setCustomerId(2);
         invoiceVM.setPurchaseDate(LocalDate.of(2019, 5, 10));
         invoiceVM.setInvoiceItems(new ArrayList<>());
 
-        OrderViewModel invoiceVM1 = service.getInvoice(invoiceVM.getInvoiceId());
+        InvoiceViewModel invoiceVM1 = service.getInvoice(invoiceVM.getInvoiceId());
 
         assertEquals(invoiceVM, invoiceVM1);
 
@@ -152,6 +148,7 @@ public class ServiceLayerTest {
 
     @Test
     public void getAllInvoices() {
+
 
         List<InvoiceItem> invoiceItems = new ArrayList<>();
 
@@ -174,29 +171,30 @@ public class ServiceLayerTest {
         invoiceItems.add(invoiceItem2);
 
 
-        OrderViewModel invoiceVM = new OrderViewModel();
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
         invoiceVM.setInvoiceId(114);
         invoiceVM.setCustomerId(1);
         invoiceVM.setPurchaseDate(LocalDate.of(2019, 7, 15));
         invoiceVM.setInvoiceItems(invoiceItems);
 
 
-        OrderViewModel invoiceVM2 = new OrderViewModel();
+        InvoiceViewModel invoiceVM2 = new InvoiceViewModel();
         invoiceVM2.setInvoiceId(2);
         invoiceVM2.setCustomerId(2);
         invoiceVM2.setPurchaseDate(LocalDate.of(2019, 5, 10));
         invoiceVM2.setInvoiceItems(new ArrayList<>());
 
-        List<OrderViewModel> invoiceList = new ArrayList<>();
+        List<InvoiceViewModel> invoiceList = new ArrayList<>();
         invoiceList.add(invoiceVM);
         invoiceList.add(invoiceVM2);
 
-        List<OrderViewModel> fromService = service.getAllInvoices();
+        List<InvoiceViewModel> fromService = service.getAllInvoices();
 
         assertEquals(2, fromService.size());
         assertEquals(invoiceList, fromService);
 
     }
+
 
     @Test
     public void getInvoicesByCustomerId() {
@@ -221,33 +219,36 @@ public class ServiceLayerTest {
 
         invoiceItems.add(invoiceItem2);
 
-        OrderViewModel invoiceVM = new OrderViewModel();
+
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
         invoiceVM.setInvoiceId(114);
         invoiceVM.setCustomerId(1);
         invoiceVM.setPurchaseDate(LocalDate.of(2019, 7, 15));
         invoiceVM.setInvoiceItems(invoiceItems);
 
-        OrderViewModel invoiceVM2 = new OrderViewModel();
+
+        InvoiceViewModel invoiceVM2 = new InvoiceViewModel();
         invoiceVM2.setInvoiceId(2);
         invoiceVM2.setCustomerId(2);
         invoiceVM2.setPurchaseDate(LocalDate.of(2019, 5, 10));
         invoiceVM2.setInvoiceItems(new ArrayList<>());
 
-        List<OrderViewModel> invoicesCust1 = new ArrayList<>();
+        List<InvoiceViewModel> invoicesCust1 = new ArrayList<>();
         invoicesCust1.add(invoiceVM);
 
-        List<OrderViewModel> invoicesCust2 = new ArrayList<>();
+        List<InvoiceViewModel> invoicesCust2 = new ArrayList<>();
         invoicesCust2.add(invoiceVM2);
 
-        List<OrderViewModel> invoicesForCust1FromService = service.getInvoicesByCustomerId(1);
+        List<InvoiceViewModel> invoicesForCust1FromService = service.getInvoicesByCustomerId(1);
 
         assertEquals(invoicesCust1, invoicesForCust1FromService);
 
-        List<OrderViewModel> invoicesForCust2FromService = service.getInvoicesByCustomerId(2);
+        List<InvoiceViewModel> invoicesForCust2FromService = service.getInvoicesByCustomerId(2);
 
         assertEquals(invoicesCust2, invoicesForCust2FromService);
 
     }
+
 
     @Test
     public void getPoints() {
@@ -256,7 +257,7 @@ public class ServiceLayerTest {
         levelUpCust1.setLevelUpId(1);
         levelUpCust1.setCustomerId(1);
         levelUpCust1.setPoints(10);
-        levelUpCust1.setMemberDate(LocalDate.of(2019, 7, 15));
+        levelUpCust1.setMemberDate(LocalDate.of(2019, 10, 14));
 
         int levelUpFromService = service.getPoints(1);
 
@@ -283,9 +284,11 @@ public class ServiceLayerTest {
 
         invoiceItemsBefore.add(invoiceItem2Before);
 
-        OrderViewModel invoiceVM = new OrderViewModel();
+
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
         invoiceVM.setCustomerId(1);
         invoiceVM.setInvoiceItems(invoiceItemsBefore);
+
 
         List<InvoiceItem> invoiceItems = new ArrayList<>();
 
@@ -308,11 +311,11 @@ public class ServiceLayerTest {
         invoiceItems.add(invoiceItem2);
 
 
-        OrderViewModelResponse ovmr = new OrderViewModelResponse();
-        ovmr.setInvoiceId(114);
-        ovmr.setCustomerId(1);
-        ovmr.setPurchaseDate(LocalDate.of(2019, 7, 15));
-        ovmr.setInvoiceItems(invoiceItems);
+        InvoiceViewModelResponse ivmRes = new InvoiceViewModelResponse();
+        ivmRes.setInvoiceId(114);
+        ivmRes.setCustomerId(1);
+        ivmRes.setPurchaseDate(LocalDate.of(2019, 7, 15));
+        ivmRes.setInvoiceItems(invoiceItems);
 
         LevelUp levelUp = new LevelUp();
         levelUp.setLevelUpId(1);
@@ -320,18 +323,20 @@ public class ServiceLayerTest {
         levelUp.setPoints(13);
         levelUp.setMemberDate(LocalDate.of(2019, 8, 25));
 
-        ovmr.setPoints(13);
+        ivmRes.setPoints(13);
 
-        OrderViewModelResponse fromService = service.addInvoice(invoiceVM);
+        InvoiceViewModelResponse ivmResFromService = service.addInvoice(invoiceVM);
 
-        verify(rabbitTemplate).convertAndSend(EXCHANGE, ROUTING_KEY, levelUp);
-        assertEquals(ovmr, fromService);
+
+//        verify(rabbitTemplate).convertAndSend(EXCHANGE, ROUTING_KEY, levelUp);
+        assertEquals(ivmRes, ivmResFromService);
 
     }
 
-    // tests calculate points when previous points are null
+
     @Test
     public void calculatePoints() {
+
 
         InvoiceItem invoiceItemBefore = new InvoiceItem();
         invoiceItemBefore.setInventoryId(1);
@@ -341,102 +346,105 @@ public class ServiceLayerTest {
         List<InvoiceItem> invoiceItems3Before = new ArrayList<>();
         invoiceItems3Before.add(invoiceItemBefore);
 
-         OrderViewModel ovm = new OrderViewModel();
-        ovm.setInvoiceId(5);
-        ovm.setCustomerId(5);
-        ovm.setPurchaseDate(LocalDate.of(2019, 5, 10));
-        ovm.setInvoiceItems(invoiceItems3Before);
+        InvoiceViewModel ivm = new InvoiceViewModel();
+        ivm.setInvoiceId(5);
+        ivm.setCustomerId(5);
+        ivm.setPurchaseDate(LocalDate.of(2019, 5, 10));
+        ivm.setInvoiceItems(invoiceItems3Before);
 
-        int points = service.calculatePoints(ovm);
+        int points = service.calculatePoints(ivm);
 
-        LevelUp levelUp = new LevelUp(ovm.getCustomerId(), 1, LocalDate.now());
+        LevelUp levelUp = new LevelUp(ivm.getCustomerId(), 1, LocalDate.now());
 
-        verify(rabbitTemplate).convertAndSend(EXCHANGE, ROUTING_KEY, levelUp);
+//        verify(rabbitTemplate).convertAndSend(EXCHANGE, ROUTING_KEY, levelUp);
 
         assertEquals(1, points);
 
     }
 
-    @Test(expected  = IllegalArgumentException.class)
-    public void IfCustomerExists() {
 
-        OrderViewModel invoiceVM = new OrderViewModel();
+    @Test(expected  = IllegalArgumentException.class)
+    public void checkIfCustomer() {
+
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
         invoiceVM.setInvoiceId(114);
-        invoiceVM.setCustomerId(20);
+        invoiceVM.setCustomerId(200);
         invoiceVM.setPurchaseDate(LocalDate.of(2019, 7, 15));
         invoiceVM.setInvoiceItems(new ArrayList<>());
 
-        if (customerClient.getCustomer(invoiceVM.getCustomerId()) == null) {
-            throw new IllegalArgumentException("Customer does not exist");
-        }
+        service.checkIfCustomer(invoiceVM);
 
     }
+
 
     @Test(expected = NotFoundException.class)
     public void getPointsFallback(){
-        service.fallBack(100);
+        service.getPointsFallback(100);
     }
 
+
     @Test(expected = InsufficientQuantityException.class)
-    public void checkStockTest(){
+    public void checkIfExceptionWhenInsufficientQuantity(){
+
 
         List<InvoiceItem> invoiceItems = new ArrayList<>();
 
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setInventoryId(100);
         invoiceItem.setQuantity(5);
-        invoiceItem.setUnitPrice(new BigDecimal("29.99"));
+        invoiceItem.setUnitPrice(new BigDecimal("10.00"));
 
         invoiceItems.add(invoiceItem);
 
-        OrderViewModel ivm = new OrderViewModelResponse();
+
+        InvoiceViewModel ivm = new InvoiceViewModelResponse();
         ivm.setCustomerId(1);
         ivm.setPurchaseDate(LocalDate.of(2019, 7, 15));
         ivm.setInvoiceItems(invoiceItems);
 
-        service.checkStock(ivm);
+        service.validateInvoiceItems(ivm);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkProductTest(){
+    public void checkIfExceptionWhenInvalidProduct(){
 
         List<InvoiceItem> invoiceItems = new ArrayList<>();
 
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setInventoryId(100);
         invoiceItem.setQuantity(1);
-        invoiceItem.setUnitPrice(new BigDecimal("29.99"));
+        invoiceItem.setUnitPrice(new BigDecimal("10.00"));
 
         invoiceItems.add(invoiceItem);
 
-        OrderViewModel ivm = new OrderViewModelResponse();
+
+        InvoiceViewModel ivm = new InvoiceViewModelResponse();
         ivm.setCustomerId(1);
         ivm.setPurchaseDate(LocalDate.of(2019, 7, 15));
         ivm.setInvoiceItems(invoiceItems);
 
-        service.checkStock(ivm);
+        service.validateInvoiceItems(ivm);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkInventoryTest(){
+    public void checkIfExceptionWhenInvalidInventory(){
 
         List<InvoiceItem> invoiceItems = new ArrayList<>();
 
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setInventoryId(200);
-        invoiceItem.setUnitPrice(new BigDecimal("29.99"));
+        invoiceItem.setUnitPrice(new BigDecimal("10.00"));
 
         invoiceItems.add(invoiceItem);
 
-        // invoice
-        OrderViewModel ivm = new OrderViewModelResponse();
+        InvoiceViewModel ivm = new InvoiceViewModelResponse();
         ivm.setCustomerId(1);
         ivm.setPurchaseDate(LocalDate.of(2019, 7, 15));
         ivm.setInvoiceItems(invoiceItems);
 
-        service.checkStock(ivm);
+        service.validateInvoiceItems(ivm);
 
     }
 
@@ -507,6 +515,7 @@ public class ServiceLayerTest {
 
     public void setUpInvoiceClientMock() {
 
+
         List<InvoiceItem> invoiceItemsBefore = new ArrayList<>();
 
         InvoiceItem invoiceItemBefore = new InvoiceItem();
@@ -523,9 +532,10 @@ public class ServiceLayerTest {
 
         invoiceItemsBefore.add(invoiceItem2Before);
 
-        OrderViewModel orderVMBefore = new OrderViewModel();
-        orderVMBefore.setCustomerId(1);
-        orderVMBefore.setInvoiceItems(invoiceItemsBefore);
+
+        InvoiceViewModel invoiceVMBefore = new InvoiceViewModel();
+        invoiceVMBefore.setCustomerId(1);
+        invoiceVMBefore.setInvoiceItems(invoiceItemsBefore);
 
         List<InvoiceItem> invoiceItems = new ArrayList<>();
 
@@ -547,37 +557,40 @@ public class ServiceLayerTest {
 
         invoiceItems.add(invoiceItem2);
 
-        OrderViewModel orderVM = new OrderViewModel();
-        orderVM.setInvoiceId(114);
-        orderVM.setCustomerId(1);
-        orderVM.setPurchaseDate(LocalDate.of(2019, 7, 15));
-        orderVM.setInvoiceItems(invoiceItems);
 
-        OrderViewModel orderVM2 = new OrderViewModel();
-        orderVM2.setInvoiceId(2);
-        orderVM2.setCustomerId(2);
-        orderVM2.setPurchaseDate(LocalDate.of(2019, 5, 10));
-        orderVM2.setInvoiceItems(new ArrayList<>());
+        InvoiceViewModel invoiceVM = new InvoiceViewModel();
+        invoiceVM.setInvoiceId(114);
+        invoiceVM.setCustomerId(1);
+        invoiceVM.setPurchaseDate(LocalDate.of(2019, 7, 15));
+        invoiceVM.setInvoiceItems(invoiceItems);
 
-        List<OrderViewModel> invoiceList = new ArrayList<>();
-        invoiceList.add(orderVM);
-        invoiceList.add(orderVM2);
 
-        doReturn(orderVM).when(invoiceClient).getInvoice(orderVM.getInvoiceId());
-        doReturn(orderVM2).when(invoiceClient).getInvoice(2);
+        InvoiceViewModel invoiceVM2 = new InvoiceViewModel();
+        invoiceVM2.setInvoiceId(2);
+        invoiceVM2.setCustomerId(2);
+        invoiceVM2.setPurchaseDate(LocalDate.of(2019, 5, 10));
+        invoiceVM2.setInvoiceItems(new ArrayList<>());
+
+
+        List<InvoiceViewModel> invoiceList = new ArrayList<>();
+        invoiceList.add(invoiceVM);
+        invoiceList.add(invoiceVM2);
+
+        doReturn(invoiceVM).when(invoiceClient).getInvoice(invoiceVM.getInvoiceId());
+        doReturn(invoiceVM2).when(invoiceClient).getInvoice(2);
         doReturn(invoiceList).when(invoiceClient).getAllInvoices();
 
-        doReturn(orderVM).when(invoiceClient).addInvoice(orderVMBefore);
+        doReturn(invoiceVM).when(invoiceClient).addInvoice(invoiceVMBefore);
 
-        List<OrderViewModel> invoiceListCust1 = new ArrayList<>();
+        List<InvoiceViewModel> invoiceListCust1 = new ArrayList<>();
         invoiceItem.setInvoiceItemId(1);
-        invoiceListCust1.add(orderVM);
+        invoiceListCust1.add(invoiceVM);
 
-        List<OrderViewModel> invoiceListCust2 = new ArrayList<>();
-        invoiceListCust2.add(orderVM2);
+        List<InvoiceViewModel> invoiceListCust2 = new ArrayList<>();
+        invoiceListCust2.add(invoiceVM2);
 
-        doReturn(invoiceListCust1).when(invoiceClient).getInvoiceByCustomerId(1);
-        doReturn(invoiceListCust2).when(invoiceClient).getInvoiceByCustomerId(2);
+        doReturn(invoiceListCust1).when(invoiceClient).getInvoicesByCustomerId(1);
+        doReturn(invoiceListCust2).when(invoiceClient).getInvoicesByCustomerId(2);
 
     }
 
@@ -587,10 +600,10 @@ public class ServiceLayerTest {
         levelUpCust1.setLevelUpId(1);
         levelUpCust1.setCustomerId(1);
         levelUpCust1.setPoints(10);
-        levelUpCust1.setMemberDate(LocalDate.of(2019, 7, 15));
+        levelUpCust1.setMemberDate(LocalDate.of(2019, 10, 14));
 
         doReturn(levelUpCust1).when(levelUpClient).getLevelUpByCustomerId(1);
-        doReturn(null).when(levelUpClient).getLevelUpByCustomerId(5);
+        doReturn(null).when(levelUpClient).getLevelUpByCustomerId(2);
 
     }
 
@@ -603,11 +616,12 @@ public class ServiceLayerTest {
         customer.setStreet("Test");
         customer.setCity("Test");
         customer.setZip("11416");
-        customer.setEmail("test@test.com");
-        customer.setPhone("121212112");
+        customer.setEmail("test@gmail.com");
+        customer.setPhone("347-279-2504");
 
         doReturn(customer).when(customerClient).getCustomer(1);
-        doReturn(null).when(customerClient).getCustomer(20);
+        doReturn(null).when(customerClient).getCustomer(10);
 
     }
+
 }

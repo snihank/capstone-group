@@ -24,8 +24,6 @@ public class InvoiceController {
     @Autowired
     InvoiceService service;
 
-    // adds the return value of the method to the cache using invoice id as the key
-    // handles requests to add an invoice
     @CachePut(key = "#result.getInvoiceId()")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,16 +31,14 @@ public class InvoiceController {
         return service.addInvoice(ivm);
     }
 
-    // didn't cache b/c result would change frequently as invoices are added
-    // handles requests to retrieve all invoices
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Invoice> getAllInvoices(){
         return service.getAllInvoices();
     }
 
-    // caches the result of the method - it automatically uses id as the key
-    // handles requests to retrieve an invoice by invoice id
+
     @Cacheable
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -50,8 +46,6 @@ public class InvoiceController {
         return service.getInvoice(id);
     }
 
-    // removes invoice with given invoice id as the key from the cache
-    // handles requests to update an invoice with a matching id
     @CacheEvict(key = "#ivm.getInvoiceId()")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -64,8 +58,6 @@ public class InvoiceController {
         service.updateInvoice(ivm, id);
     }
 
-    // removes invoice with given invoice id as the key from the cache
-    // handles requests to delete an invoice by id
     @CacheEvict
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -73,8 +65,7 @@ public class InvoiceController {
         service.deleteInvoice(id);
     }
 
-    // didn't cache b/c result would change frequently as invoices are added
-    // handles requests to retrieve all invoices by customer id
+
     @GetMapping("/customer/{id}")
     @ResponseStatus(HttpStatus.OK)
     public List<Invoice> getInvoiceByCustomerId(@PathVariable("id") int id){

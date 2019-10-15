@@ -24,7 +24,6 @@ public class ProductDaoJdbcTemplateImplTest {
     @Autowired
     ProductDao productDao;
 
-    // clear product table in database
     @Before
     public void setUp() throws Exception {
         List<Product> products = productDao.getAllProducts();
@@ -33,7 +32,7 @@ public class ProductDaoJdbcTemplateImplTest {
         }
     }
 
-    // tests addProduct(), getProduct() and deleteProduct()
+
     @Test
     public void addGetDeleteProduct() {
 
@@ -53,14 +52,14 @@ public class ProductDaoJdbcTemplateImplTest {
         assertNull(product1);
     }
 
-    // tests if will return null if try to get product with non-existent id
+
     @Test
     public void getProductWithNonExistentId() {
         Product product = productDao.getProduct(500);
         assertNull(product);
     }
 
-    // tests if will throw exception if id provided does not exist when trying to delete product
+
     @Test(expected  = NotFoundException.class)
     public void deleteProductWithNonExistentId() {
 
@@ -68,7 +67,7 @@ public class ProductDaoJdbcTemplateImplTest {
 
     }
 
-    // tests updateProduct()
+
     @Test
     public void updateProduct() {
 
@@ -88,7 +87,7 @@ public class ProductDaoJdbcTemplateImplTest {
         assertEquals(product, product1);
     }
 
-    // tests if will throw exception if id provided does not exist when trying to update product
+
     @Test(expected  = IllegalArgumentException.class)
     public void updateProductWithIllegalArgumentException() {
 
@@ -102,7 +101,6 @@ public class ProductDaoJdbcTemplateImplTest {
 
     }
 
-    // tests getAllProducts()
     @Test
     public void getAllProducts() {
 
